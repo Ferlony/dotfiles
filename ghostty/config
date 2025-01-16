@@ -1,0 +1,8 @@
+background = #1d1f21
+foreground = #c5c8c6
+
+window-decoration = false
+window-padding-x = 0,0
+window-padding-y = 0,0
+
+confirm-close-surface = false
