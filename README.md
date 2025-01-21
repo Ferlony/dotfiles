@@ -29,6 +29,11 @@ To enable python pyright lsp server need to install
 sudo npm i -g pyright
 ```
 
+To install all custom packages
+``` emacs-lisp
+package-install-selected-packages
+```
+
 
 To enable word-wrap to new line without changing buffer
 ``` emacs-lisp
