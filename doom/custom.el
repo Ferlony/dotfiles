@@ -20,6 +20,10 @@
 ;; 
 ;; (my-global-rainbow-mode 1)
 
+(setq doom-font (font-spec :family "Fira Code" :size 14 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 15))
+
+
 (setq markdown-split-window-direction 'right)
 
 (add-hook! 'rainbow-mode-hook
