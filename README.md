@@ -40,3 +40,9 @@ To enable word-wrap to new line without changing buffer
 
 global-visual-line-mode 
 ```
+
+For go lang gopls lsp support install
+``` shell
+go install golang.org/x/tools/gopls@latest
+```
+
