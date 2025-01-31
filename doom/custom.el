@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(copilot-chat-model "gpt-4o")
  '(package-selected-packages
-   '(pytest dap-mode omnisharp blacken lsp-pyright go-mode lsp-jedi jedi elpy protobuf-mode clang-format solidity-flycheck solidity-mode pipenv poetry python-environment pyenv-mode lazy-ruff python-black copilot-chat copilot treemacs zig-mode markdown-preview-eww rainbow-mode rgb)))
+   '(docker-compose-mode dockerfile-mode pytest dap-mode omnisharp blacken lsp-pyright go-mode lsp-jedi jedi elpy protobuf-mode clang-format solidity-flycheck solidity-mode pipenv poetry python-environment pyenv-mode lazy-ruff python-black copilot-chat copilot treemacs zig-mode markdown-preview-eww rainbow-mode rgb)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -22,14 +22,14 @@
 
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
 
-(setq doom-font (font-spec :family "Fira Code" :size 16 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 17))
+(setq doom-font (font-spec :family "Hack" :size 14 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Hack" :size 15))
 
 
 (setq markdown-split-window-direction 'right)
 (setq-default delete-by-moving-to-trash t)
 (global-visual-line-mode t)
-
+(delete-selection-mode 1)
 
 (add-hook! 'rainbow-mode-hook
   (hl-line-mode (if rainbow-mode -1 +1)))
