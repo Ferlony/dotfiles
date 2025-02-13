@@ -20,9 +20,6 @@ git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
 ```
 
-Probably only doom/custom.el  
-is needed
-
 To enable python pyright lsp server need to install
 
 ``` shell
