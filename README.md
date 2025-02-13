@@ -46,3 +46,10 @@ For go lang gopls lsp support install
 go install golang.org/x/tools/gopls@latest
 ```
 
+For python debug
+
+``` shell
+pip3 install debugpy --user
+```
+
+`
