@@ -46,7 +46,6 @@ go install golang.org/x/tools/gopls@latest
 For python debug
 
 ``` shell
-pip3 install debugpy --user
+pip3 install debugpy
 ```
 
-`

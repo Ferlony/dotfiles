@@ -1,11 +1,13 @@
+;;; -*- lexical-binding: t -*-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(copilot-chat-model "claude-3.5-sonnet")
+ '(copilot-chat-model "claude-3.7-sonnet-thought")
  '(package-selected-packages
-   '(lua-mode docker-compose-mode dockerfile-mode pytest dap-mode omnisharp blacken lsp-pyright go-mode lsp-jedi jedi elpy protobuf-mode clang-format solidity-flycheck solidity-mode pipenv poetry python-environment pyenv-mode lazy-ruff python-black copilot-chat copilot treemacs zig-mode markdown-preview-eww rainbow-mode rgb)))
+   '(copilot copilot-chat csv-mode dape highlight indent-guide lsp-pyright
+     rainbow-mode spell-fu)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -13,14 +15,64 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; (add-hook 'web-mode-hook #'rainbow-mode)
-
-;; (define-globalized-minor-mode my-global-rainbow-mode rainbow-mode
-;;   (lambda () (rainbow-mode 1)))
-;; 
-;; (my-global-rainbow-mode 1)
-
+;; Go lsp
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
+
+;; debugpy args
+;;# Launch/Attach Settings
+;;
+;;## Overview
+;;
+;;These are the settings that you would use in the Launch/Attach Request in any DAP client.
+;;
+;;## Code Execution Settings
+;;
+;;| Property | Type          | Configuration | Description                                                                                                                                                           |
+;;| -------- | ------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+;;| module   | string        | Launch        | Name of the module to be debugged.                                                                                                                                    |
+;;| program  | string        | Launch        | Absolute path to the program.                                                                                                                                         |
+;;| code     | string        | Launch        | Code to execute in string form. Example: `"code": "import debugpy;print(debugpy.__version__)"`                                                                        |
+;;| python   | Array[string] | Launch        | Path python executable and interpreter arguments. Example: `"python": ["/usr/bin/python", "-E"]`, For arguments to your script use "args".                            |
+;;| args     | Array[string] | Launch        | Command line arguments passed to the program. Example: `"args": ["--arg1", "-arg2", "val", ...]`                                                                      |
+;;| console  | Enum          | Launch        | Supported values `["internalConsole", "integratedTerminal", "externalTerminal"]`. Sets where to launch the debug target. Default is `"integratedTerminal"`.           |
+;;| cwd      | string        | Launch        | Absolute path to the working directory of the program being debugged.                                                                                                 |
+;;| env      | Object        | Launch        | Environment variables defined as a key value pair. Property ends up being the Env Variable and the value of the property ends up being the value of the Env Variable. |
+;;
+;;## Debugger Settings
+;;
+;;| Property        | Type          | Configuration | Description                                                                                                                      |
+;;| --------------- | ------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+;;| django          | Boolean       | Launch/Attach | When `true` enables Django templates. Default is `false`.                                                                        |
+;;| gevent          | Boolean       | Launch/Attach | When `true` enables debugging of gevent monkey-patched code. Default is `false`.                                                 |
+;;| jinja           | Boolean       | Launch/Attach | When `true` enables Jinja2 template debugging (e.g. Flask). Default is `false`.                                                  |
+;;| justMyCode      | Boolean       | Launch/Attach | When `true` debug only user-written code. To debug standard library or anything outside of "cwd" use `false`. Default is `true`. |
+;;| logToFile       | Boolean       | Launch/Attach | When `true` enables logging of debugger events to a log file(s). Default is `false`.                                             |
+;;| pathMappings    | Array[Object] | Launch/Attach | Map of local and remote paths. Example: `"pathMappings": [{"localRoot": "local path", "remoteRoot": "remote path"}, ...]`.       |
+;;| pyramid         | Boolean       | Launch/Attach | When `true` enables debugging Pyramid applications. Default is `false`.                                                          |
+;;| redirectOutput  | Boolean       | Launch/Attach | When `true` redirects output to debug console. Default is `false`.                                                               |
+;;| showReturnValue | Boolean       | Launch/Attach | Shows return value of functions when stepping. The return value is added to the response to Variables Request                    |
+;;| stopOnEntry     | Boolean       | Launch        | When `true` debugger stops at first line of user code. When `false` debugger does not stop until breakpoint, exception or pause. |
+;;| subProcess      | Boolean       | Launch/Attach | When `true` enables debugging multiprocess applications. Default is `true`.                                                      |
+;;| sudo            | Boolean       | Launch/Attach | When `true` runs program program under elevated permissions (on Unix). Default is `false`.                                       |
+;;
+;;## Examples
+;;
+
+(require 'dape)
+(add-to-list 'dape-configs
+             `(debugpy
+               modes (python-ts-mode python-mode)
+               command "python"
+               command-args ("-m" "debugpy.adapter")
+               :type "executable"
+               :request "launch"
+	       :console "integratedTerminal"
+	       :showReturnValue nil ;;t
+	       :justMyCode nil
+               :cwd dape-cwd-fn
+               ;;:program dape-find-file-buffer-default
+               ))
+
 
 (setq doom-font (font-spec :family "Hack" :size 15 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Hack" :size 16))
@@ -31,31 +83,18 @@
 (global-visual-line-mode t)
 (setq-default delete-selection-mode 1)
 
+
 (add-hook! 'rainbow-mode-hook
   (hl-line-mode (if rainbow-mode -1 +1)))
 
+
 (add-hook 'python-mode-hook 'lsp)
-(after! dap-mode
-(require 'dap-python)
-  (setq dap-python-debugger 'debugpy))
-;; (require 'dap-python)
-;; (setq dap-python-debugger 'debugpy)
-
-(require 'lsp-mode)
-(add-hook 'go-mode-hook #'lsp-deferred)
-(which-key-mode)
-
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'c++-mode-hook 'lsp)
-;; Set up before-save hooks to format buffer and add/delete imports.
-;; Make sure you don't have other gofmt/goimports hooks enabled.
-;;(defun lsp-go-install-save-hooks ()
-;;  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-;;  (add-hook 'before-save-hook #'lsp-organize-imports t t))
-;;(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+(add-hook 'csharp-mode-hook 'lsp)
+(add-hook 'go-mode-hook #'lsp-deferred)
 
 
-;; accept completion from copilot and fallback to company
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
@@ -64,5 +103,5 @@
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
-;; init packages at start up
+
 (package-initialize)
