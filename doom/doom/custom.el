@@ -3,9 +3,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(copilot-chat-model "claude-3.5-sonnet")
+ '(copilot-chat-model "claude-3.7-sonnet-thought")
  '(package-selected-packages
-   '(company-quickhelp spell-fu flycheck-aspell lua-mode docker-compose-mode dockerfile-mode pytest dap-mode blacken lsp-pyright go-mode lsp-jedi jedi elpy protobuf-mode clang-format solidity-flycheck solidity-mode pipenv poetry python-environment pyenv-mode lazy-ruff python-black copilot-chat copilot treemacs zig-mode markdown-preview-eww rainbow-mode rgb)))
+   '(blacken clang-format company-quickhelp copilot copilot-chat csv-mode dap-mode
+     docker-compose-mode dockerfile-mode elpy flycheck-aspell go-mode
+     highlight-indent-guides indent-guide jedi lazy-ruff lsp-jedi lsp-pyright
+     lua-mode markdown-preview-eww pipenv poetry protobuf-mode pyenv-mode pytest
+     python-black python-environment rainbow-mode rgb solidity-flycheck
+     solidity-mode spell-fu treemacs zig-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -53,24 +58,54 @@
 (add-hook! 'rainbow-mode-hook
   (hl-line-mode (if rainbow-mode -1 +1)))
 
-(add-hook 'python-mode-hook 'lsp)
-(after! dap-mode
-(require 'dap-python)
-  (setq dap-python-debugger 'debugpy))
-;; (require 'dap-python)
-;; (setq dap-python-debugger 'debugpy)
 
-(setq dap-python-executable "venv/bin/python")
-(setq lsp-pyright-venv-path "venv")
-(setenv "PYTHONPATH" (concat (expand-file-name "src") ":" (getenv "PYTHONPATH")))
+(add-hook 'python-mode-hook 'lsp)
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
+
+
+(use-package! dap-mode
+  :after lsp-mode
+  :config
+  ;; Enable Python debugging
+  (require 'dap-python)
+
+  ;; Configure debugpy
+  (setq dap-python-debugger 'debugpy
+        dap-python-executable "python")  ;; or "python" if that's your command
+
+  ;; Debug template
+  ;;(dap-register-debug-template
+  ;; "Python Debug"
+  ;; (list :type "python"
+  ;;       :request "launch"
+  ;;       :name "Python Debug"
+  ;;       :program "${file}"
+  ;;       :pythonArgs ""
+  ;;       :console "integratedTerminal"
+  ;;       :cwd "${fileDirname}"))
+  )
+
+(setq dap-auto-configure-features '(sessions locals breakpoints expressions controls))
+
+
+;; (setq dap-python-executable "venv/bin/python")
+;;(setq lsp-pyright-venv-path "venv")
+;;(setenv "PYTHONPATH" (concat (expand-file-name "src") ":" (getenv "PYTHONPATH")))
 
 
 (require 'lsp-mode)
 (add-hook 'go-mode-hook #'lsp-deferred)
 (which-key-mode)
 
-(add-hook 'c-mode-hook 'lsp)
-(add-hook 'c++-mode-hook 'lsp)
+
+(defun my/lsp-shutdown-all-workspaces ()
+  "Shutdown all active LSP workspaces."
+  (interactive)
+  (dolist (ws (lsp-workspaces))
+    (lsp-workspace-shutdown ws)))
+
+
 ;; Set up before-save hooks to format buffer and add/delete imports.
 ;; Make sure you don't have other gofmt/goimports hooks enabled.
 ;;(defun lsp-go-install-save-hooks ()
@@ -91,7 +126,7 @@
 
 (after! company
   (setq company-frontends '(company-pseudo-tooltip-frontend) ; Only use company's frontend
-        company-idle-delay 0.2
+        company-idle-delay 0.1
         company-minimum-prefix-length 2))
 
 ;; (use-package company-quickhelp
@@ -114,6 +149,11 @@
 (add-hook 'prog-mode-hook (lambda () (setq-local completion-at-point-functions nil)))
 (add-hook 'text-mode-hook (lambda () (setq-local completion-at-point-functions nil)))
 
+
+;; Keep Treemacs static
+(setq treemacs-follow-after-init nil    ; Don't follow file on init
+      treemacs-follow-mode nil         ; Don't auto-follow selections
+      treemacs-quit-on-file-select nil) ; Don't close Treemacs when opening a file
 
 
 ;; init packages at start up
