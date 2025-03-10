@@ -6,8 +6,8 @@
  ;; If there is more than one, they won't work right.
  '(copilot-chat-model "claude-3.7-sonnet-thought")
  '(package-selected-packages
-   '(copilot copilot-chat csv-mode dape highlight indent-guide lsp-pyright
-     rainbow-mode spell-fu)))
+   '(copilot copilot-chat csv-mode dape go-mode highlight indent-guide lsp-pyright
+     protobuf-mode pytest rainbow-mode spell-fu)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -74,6 +74,10 @@
                ))
 
 
+(setq dape-config-pytest '((mode . "python")
+                           (command . "python")
+                           (args . ("-m" "debugpy.adapter" "--wait-for-client" "--" "pytest" "-s" "-v"))))
+
 (setq doom-font (font-spec :family "Hack" :size 15 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Hack" :size 16))
 
@@ -95,6 +99,18 @@
 (add-hook 'go-mode-hook #'lsp-deferred)
 
 
+(after! company
+  (setq company-frontends '(company-pseudo-tooltip-frontend)
+        company-idle-delay 0.1
+        company-minimum-prefix-length 1))
+
+;(use-package company-quickhelp
+;  :ensure t
+;  :config
+;  (company-quickhelp-mode 1)
+;  (setq company-quickhelp-delay 0.5)) ; Delay before help popup appears
+
+
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
@@ -102,6 +118,13 @@
               ("TAB" . 'copilot-accept-completion)
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+
+;;(with-eval-after-load 'copilot
+;;  (defun copilot--infer-indentation-offset ()
+;;    (or (copilot--get-indentation-offset-from-mode)
+;;        (copilot--get-indentation-offset-from-buffer)
+;;        4))) ; Default to 4 spaces if no offset is found
 
 
 (package-initialize)
