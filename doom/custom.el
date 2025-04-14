@@ -7,7 +7,9 @@
  '(copilot-chat-model "claude-3.7-sonnet-thought")
  '(package-selected-packages
    '(copilot copilot-chat csv-mode dape go-mode highlight indent-guide lsp-pyright
-     protobuf-mode pytest rainbow-mode spell-fu)))
+     protobuf-mode pytest rainbow-mode react-snippets spell-fu))
+ '(warning-suppress-log-types
+   '((lsp-mode) (copilot copilot-no-mode-indent) (copilot copilot-exceeds-max-char))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -56,7 +58,10 @@
 ;;| sudo            | Boolean       | Launch/Attach | When `true` runs program program under elevated permissions (on Unix). Default is `false`.                                       |
 ;;
 ;;## Examples
-;;
+;; install debugpy in env
+;; '''pip install debugpy'''
+;; ```debugpy :module "example" :cwd "/some/abs/path/to/root/" :console "integratedTerminal" :showReturnValue nil :justMyCode nil '''
+;; ```debugpy :program "/some/abs/path/to/root/example.py" :cwd "/some/abs/path/to/root/" :args "["--arg2, "-arg2", "val", ...]" :console "integratedTerminal" :showReturnValue true :justMyCode true'''
 
 (require 'dape)
 (add-to-list 'dape-configs
@@ -102,7 +107,15 @@
 (after! company
   (setq company-frontends '(company-pseudo-tooltip-frontend)
         company-idle-delay 0.1
-        company-minimum-prefix-length 1))
+        company-minimum-prefix-length 1
+        company-show-quick-access t)
+)
+
+;(add-hook 'python-mode-hook
+;  (defun my-python-imenu-hook ()
+;    (setq imenu-generic-expression
+;          '((nil "^\\s-*def\\s-+\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\s-*(" 1)
+;            (nil "^\\s-*class\\s-+\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\s-*:" 1)))))
 
 ;(use-package company-quickhelp
 ;  :ensure t
@@ -128,3 +141,5 @@
 
 
 (package-initialize)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
