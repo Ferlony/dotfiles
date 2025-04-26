@@ -61,7 +61,7 @@
 ;; install debugpy in env
 ;; '''pip install debugpy'''
 ;; ```debugpy :module "example" :cwd "/some/abs/path/to/root/" :console "integratedTerminal" :showReturnValue nil :justMyCode nil '''
-;; ```debugpy :program "/some/abs/path/to/root/example.py" :cwd "/some/abs/path/to/root/" :args "["--arg2, "-arg2", "val", ...]" :console "integratedTerminal" :showReturnValue true :justMyCode true'''
+;; ```debugpy :program "/some/abs/path/to/root/example.py" :env '(:API_KEYS "value" :GEVENT_SUPPORT "True") :cwd "/some/abs/path/to/root/" :args "["--arg2, "-arg2", "val", ...]" :console "integratedTerminal" :showReturnValue true :justMyCode true'''
 
 (require 'dape)
 (add-to-list 'dape-configs
